@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: kvm | My Octopress Blog]]></title>
+  <link href="http://sfrek.github.com/blog/categories/kvm/atom.xml" rel="self"/>
+  <link href="http://sfrek.github.com/"/>
+  <updated>2013-02-04T17:47:37+01:00</updated>
+  <id>http://sfrek.github.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Borrar Máquinas Virtuales con KVM]]></title>
+    <link href="http://sfrek.github.com/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm/"/>
+    <updated>2013-02-04T16:53:00+01:00</updated>
+    <id>http://sfrek.github.com/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm</id>
+    <content type="html"><![CDATA[<p>Como soy un <em>"freak"</em> de la linea de comandos y de del <em>"make your self"</em> así
+como un enamorado del <a href="http://www.linux-kvm.org/">kvm</a>, <a href="http://libvirt.org/">libvirt</a>, <a href="http://libvirt.org/virshcmdref.html">virsh</a>, la virtualización en
+general y/o el <em>"cloud"</em> en particular, cuando hay que hacer alguna tarea de
+minería no me importa gastar algo de tiempo en <em>"automatizar"</em> dicha tarea,
+aunque, luego no lo vuelva a necesitar, ejejeje. Como dijo un coleguita, <em>"El
+script, que crea el script, que realiza la acción"</em>.</p>
+
+<p>Bueno al grano, tenemos un servidor dedicado a la <em>virtualización</em> con <a href="http://www.linux-kvm.org/">kvm</a>,
+y lo teníamos hasta arriva de máquínas que ya no usamos para nada, así que
+hemos decidido borra todas aquellas que no necesitamos, pero claro, algunas
+tienen más de un disco, y ... que pereza, bueno pués <a href="http://libvirt.org/virshcmdref.html">virsh</a> es tu aliado:</p>
+
+<h3>Listado de las máquinas a eliminar:</h3>
+
+<p>Para decidir obtener el listado completo de las máquinas que están corriendo en
+yun <em>hypervisor</em> con <a href="http://www.linux-kvm.org/">kvm</a> utlizamos <code>virsh list --all</code> pero claro esto te
+muestra un listado muy chulo, aunque poco manejable, por ejemplo:</p>
+
+<p>```
+kvm:~# virsh list --all
+ Id    Name                           State</p>
+
+<hr />
+
+<p>  1     presice-chef-server            running
+  -     template_debian_lenny          shut off
+  -     template_debian_squeeze        shut off
+  -     template_debian_wheezy         shut off
+```</p>
+
+<p>Como a mí lo que me interesa es una lista, que sólo tenga los nombres de las
+máquinas:</p>
+
+<p><code>
+virsh -q list --all | awk '{print $2}' &gt; tmp/vms.list
+</code></p>
+
+<p>Ojo, primero he editado dicho fichero, y he quitado todas aquellas máquinas que
+tengo y/o quiero conservar.</p>
+
+<h3>Script para borrar una máquina</h3>
+
+<p>Al eliminar una máquina hay que tener en cuenta tanto los discos como la
+definicion de la propia máquina.</p>
+
+<p>Para obtener los discos que está usando un <em>"dominio"</em> en concreto usamos
+<code>virsh domblklist &lt;dominio&gt;</code>, otro comando muy chulo, aunque de nuevo, la
+información que optenemos es poco manejable:</p>
+
+<p>```</p>
+
+<h2>Target     Source</h2>
+
+<p>vda        /var/lib/libvirt/images/<nombre-disco>.img
+hdc        -
+```</p>
+
+<p>Y para eliminar una máquina, lo que se usa es <code>virsh undefine &lt;dominio&gt;</code>.</p>
+
+<p>Llegado a este punto quiero aclarar un par de cosas:</p>
+
+<blockquote><ul>
+<li><em>dominio</em> == <em>máquina virtual</em></li>
+<li>Eliminar <em>máquina virtual</em> == <em>borrar discos</em> + <em>realizar <em>undefine</em> de dicha
+máquina</em></li>
+</ul>
+</blockquote>
+
+<p>Así pues, he creado el siguiente script:</p>
+
+<p>``` bash</p>
+
+<h1>!/bin/bash</h1>
+
+<p>[ $# -lt 1 ] &amp;&amp; echo "Falta Dominio" &amp;&amp; exit 1</p>
+
+<p>DOM=$1</p>
+
+<p>for IMG in $(virsh domblklist $DOM | awk '/\/var.*.img/ {print $2}')
+do</p>
+
+<pre><code>echo "Borramos: "
+echo $DOM:$IMG
+rm -vf $IMG
+</code></pre>
+
+<p>done</p>
+
+<p>echo "Eliminamos $DOM"
+virsh undefine $DOM
+```</p>
+
+<p>Y para rizar el rizo, como tengo mi <em>listilla</em> con las máquinas que quiero
+borrar en <em>tmp/vms.list</em> ejecuto:</p>
+
+<p><code>
+for DOM in $(cat tmp/vms.list);do bash borrar_maquina.sh $DOM;done
+</code></p>
+
+<p>Y <em>e voilà</em> me he desecho de todas las máquinas que no quería.</p>
+
+<p>Hasta otra.</p>
+]]></content>
+  </entry>
+  
+</feed>
