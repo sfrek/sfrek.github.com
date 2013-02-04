@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>My Octopress Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Como soy un &#8220;freak&#8221; de la linea de comandos y de del &#8220;make your self&#8221; así
+como un enamorado del kvm, libvirt, virsh, la &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://sfrek.github.com/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Octopress Blog</a></h1>
+  
+    <h2>A blogging framework for hackers.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:sfrek.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm/">Borrar Máquinas Virtuales Con KVM</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-04T16:53:00+01:00" pubdate data-updated="true">Feb 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Como soy un <em>&#8220;freak&#8221;</em> de la linea de comandos y de del <em>&#8220;make your self&#8221;</em> así
+como un enamorado del <a href="http://www.linux-kvm.org/">kvm</a>, <a href="http://libvirt.org/">libvirt</a>, <a href="http://libvirt.org/virshcmdref.html">virsh</a>, la virtualización en
+general y/o el <em>&#8220;cloud&#8221;</em> en particular, cuando hay que hacer alguna tarea de
+minería no me importa gastar algo de tiempo en <em>&#8220;automatizar&#8221;</em> dicha tarea,
+aunque, luego no lo vuelva a necesitar, ejejeje. Como dijo un coleguita, <em>&#8220;El
+script, que crea el script, que realiza la acción&#8221;</em>.</p>
+
+<p>Bueno al grano, tenemos un servidor dedicado a la <em>virtualización</em> con <a href="http://www.linux-kvm.org/">kvm</a>,
+y lo teníamos hasta arriva de máquínas que ya no usamos para nada, así que
+hemos decidido borra todas aquellas que no necesitamos, pero claro, algunas
+tienen más de un disco, y &#8230; que pereza, bueno pués <a href="http://libvirt.org/virshcmdref.html">virsh</a> es tu aliado:</p>
+
+<h3>Listado de las máquinas a eliminar:</h3>
+
+<p>Para decidir obtener el listado completo de las máquinas que están corriendo en
+yun <em>hypervisor</em> con <a href="http://www.linux-kvm.org/">kvm</a> utlizamos <code>virsh list --all</code> pero claro esto te
+muestra un listado muy chulo, aunque poco manejable, por ejemplo:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>kvm:~# virsh list --all
+</span><span class='line'> Id    Name                           State
+</span><span class='line'> ----------------------------------------------------
+</span><span class='line'>  1     presice-chef-server            running
+</span><span class='line'>  -     template_debian_lenny          shut off
+</span><span class='line'>  -     template_debian_squeeze        shut off
+</span><span class='line'>  -     template_debian_wheezy         shut off</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Como a mí lo que me interesa es una lista, que sólo tenga los nombres de las
+máquinas:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>virsh -q list --all | awk '{print $2}' &gt; tmp/vms.list</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ojo, primero he editado dicho fichero, y he quitado todas aquellas máquinas que
+tengo y/o quiero conservar.</p>
+
+<h3>Script para borrar una máquina</h3>
+
+<p>Al eliminar una máquina hay que tener en cuenta tanto los discos como la
+definicion de la propia máquina.</p>
+
+<p>Para obtener los discos que está usando un <em>&#8220;dominio&#8221;</em> en concreto usamos
+<code>virsh domblklist &lt;dominio&gt;</code>, otro comando muy chulo, aunque de nuevo, la
+información que optenemos es poco manejable:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Target     Source
+</span><span class='line'>------------------------------------------------
+</span><span class='line'>vda        /var/lib/libvirt/images/&lt;nombre-disco&gt;.img
+</span><span class='line'>hdc        -</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Y para eliminar una máquina, lo que se usa es <code>virsh undefine &lt;dominio&gt;</code>.</p>
+
+<p>Llegado a este punto quiero aclarar un par de cosas:</p>
+
+<blockquote><ul>
+<li><em>dominio</em> == <em>máquina virtual</em></li>
+<li>Eliminar <em>máquina virtual</em> == <em>borrar discos</em> + <em>realizar <em>undefine</em> de dicha
+máquina</em></li>
+</ul>
+</blockquote>
+
+<p>Así pues, he creado el siguiente script:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/bash</span>
+</span><span class='line'><span class="o">[</span> <span class="nv">$# </span>-lt 1 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;Falta Dominio&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">exit </span>1
+</span><span class='line'>
+</span><span class='line'><span class="nv">DOM</span><span class="o">=</span><span class="nv">$1</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for </span>IMG in <span class="k">$(</span>virsh domblklist <span class="nv">$DOM</span> | awk <span class="s1">&#39;/\/var.*.img/ {print $2}&#39;</span><span class="k">)</span>
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Borramos: &quot;</span>
+</span><span class='line'>    <span class="nb">echo</span> <span class="nv">$DOM</span>:<span class="nv">$IMG</span>
+</span><span class='line'>    rm -vf <span class="nv">$IMG</span>
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">echo</span> <span class="s2">&quot;Eliminamos $DOM&quot;</span>
+</span><span class='line'>virsh undefine <span class="nv">$DOM</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Y para rizar el rizo, como tengo mi <em>listilla</em> con las máquinas que quiero
+borrar en <em>tmp/vms.list</em> ejecuto:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="k">for </span>DOM in <span class="k">$(</span>cat tmp/vms.list<span class="k">)</span>;<span class="k">do </span>bash borrar_maquina.sh <span class="nv">$DOM</span>;<span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Y <em>e voilà</em> me he desecho de todas las máquinas que no quería.</p>
+
+<p>Hasta otra.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm/">Borrar Máquinas Virtuales con KVM</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
