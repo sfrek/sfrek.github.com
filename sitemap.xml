@@ -2,18 +2,22 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://sfrek.github.com/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm/</loc>
-        <lastmod>2013-02-04T17:38:05+01:00</lastmod>
+        <lastmod>2013-02-05T09:10:08+01:00</lastmod>
+    </url>
+    <url>
+        <loc>http://sfrek.github.com/404.html</loc>
+        <lastmod>2013-02-05T09:10:08+01:00</lastmod>
     </url>
     <url>
         <loc>http://sfrek.github.com/robots.txt</loc>
-        <lastmod>2013-02-04T17:38:05+01:00</lastmod>
+        <lastmod>2013-02-05T09:08:45+01:00</lastmod>
     </url>
     <url>
         <loc>http://sfrek.github.com/blog/archives/</loc>
-        <lastmod>2013-02-04T17:38:05+01:00</lastmod>
+        <lastmod>2013-02-05T09:10:08+01:00</lastmod>
     </url>
     <url>
         <loc>http://sfrek.github.com/</loc>
-        <lastmod>2013-02-04T17:38:05+01:00</lastmod>
+        <lastmod>2013-02-05T09:10:08+01:00</lastmod>
     </url>
 </urlset>
