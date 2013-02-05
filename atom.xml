@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[Sfrek's Blog]]></title>
   <link href="http://sfrek.github.com/atom.xml" rel="self"/>
   <link href="http://sfrek.github.com/"/>
-  <updated>2013-02-04T17:47:37+01:00</updated>
+  <updated>2013-02-05T08:04:39+01:00</updated>
   <id>http://sfrek.github.com/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
-    
+    <name><![CDATA[Fernando Israel García Martínez]]></name>
+    <email><![CDATA[frekofefe@gmail.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
