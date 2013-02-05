@@ -97,6 +97,416 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2013/02/05/prueba-de-la-demo-de-chef-sever-11/">Prueba De La Demo De Chef Sever 11</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-05T13:27:00+01:00" pubdate data-updated="true">Feb 5<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Quiero probar <a href="http://www.opscode.com/blog/2013/02/04/chef-11-released">Chef Server 11</a> y he visto en el <a href="https://github.com/opscode-cookbooks/chef-server#demo-chef-server-with-vagrant-and-berkshelf">README.md</a> una <em>demo</em> para realizar una prueba, dicha demos es la que voy a recrea:</p>
+
+<h2>Demo:</h2>
+
+<ul>
+<li>Descargamos el repositorio:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>figarcia@corelia:~/src$ git clone
+</span><span class='line'>git://github.com/opscode-cookbooks/chef-server.git
+</span><span class='line'>Cloning into 'chef-server'...
+</span><span class='line'>remote: Counting objects: 460, done.
+</span><span class='line'>remote: Compressing objects: 100% (240/240), done.
+</span><span class='line'>remote: Total 460 (delta 233), reused 407 (delta 188)
+</span><span class='line'>Receiving objects: 100% (460/460), 87.39 KiB | 134 KiB/s, done.
+</span><span class='line'>Resolving deltas: 100% (233/233), done.
+</span><span class='line'>figarcia@corelia:~/src$ cd chef-server</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<ul>
+<li>Antes de lanzar el <code>bundle install</code>, y como hago uso de [rvm][] me creo un
+fichero <em>.rvmrc</em> con un entorno cerrado:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>figarcia@corelia:~/src/chef-server$ cat .rvmrc
+</span><span class='line'>rvm use ruby-1.9.3@chef-server --create</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Instalamos las <em>gemas</em> necesarias:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>figarcia@corelia:~/src/chef-server$ bundle install
+</span><span class='line'>Fetching gem metadata from http://rubygems.org/........
+</span><span class='line'>Fetching gem metadata from http://rubygems.org/..
+</span><span class='line'>Installing i18n (0.6.1) 
+</span><span class='line'>Installing multi_json (1.5.0) 
+</span><span class='line'>Installing activesupport (3.2.11) 
+</span><span class='line'>Installing builder (3.0.4) 
+</span><span class='line'>Installing activemodel (3.2.11) 
+</span><span class='line'>Installing addressable (2.3.2) 
+</span><span class='line'>Installing archive-tar-minitar (0.5.2) 
+</span><span class='line'>Installing erubis (2.7.0) 
+</span><span class='line'>Installing highline (1.6.15) 
+</span><span class='line'>Installing json (1.5.4) with native extensions 
+</span><span class='line'>Installing mixlib-log (1.4.1) 
+</span><span class='line'>Installing mixlib-authentication (1.3.0) 
+</span><span class='line'>Installing mixlib-cli (1.3.0) 
+</span><span class='line'>Installing mixlib-config (1.1.2) 
+</span><span class='line'>Installing mixlib-shellout (1.1.0) 
+</span><span class='line'>Installing net-ssh (2.2.2) 
+</span><span class='line'>Installing net-ssh-gateway (1.1.0) 
+</span><span class='line'>Installing net-ssh-multi (1.1) 
+</span><span class='line'>Installing ipaddress (0.8.0) 
+</span><span class='line'>Installing systemu (2.5.2) 
+</span><span class='line'>Installing yajl-ruby (1.1.0) with native extensions 
+</span><span class='line'>Installing ohai (6.16.0) 
+</span><span class='line'>Installing mime-types (1.20.1) 
+</span><span class='line'>Installing rest-client (1.6.7) 
+</span><span class='line'>Installing chef (11.0.0) 
+</span><span class='line'>Installing hashie (1.2.0) 
+</span><span class='line'>Installing chozo (0.4.2) 
+</span><span class='line'>Installing minitar (0.5.4) 
+</span><span class='line'>Installing facter (1.6.17) 
+</span><span class='line'>Installing timers (1.1.0) 
+</span><span class='line'>Installing celluloid (0.12.4) 
+</span><span class='line'>Installing multipart-post (1.1.5) 
+</span><span class='line'>Installing faraday (0.8.5) 
+</span><span class='line'>Installing net-http-persistent (2.8) 
+</span><span class='line'>Installing ridley (0.6.3) 
+</span><span class='line'>Installing solve (0.4.1) 
+</span><span class='line'>Installing thor (0.16.0) 
+</span><span class='line'>Installing ffi (1.3.1) with native extensions 
+</span><span class='line'>Installing childprocess (0.3.7) 
+</span><span class='line'>Installing log4r (1.1.10) 
+</span><span class='line'>Installing net-scp (1.0.4) 
+</span><span class='line'>Installing vagrant (1.0.6) 
+</span><span class='line'>Installing berkshelf (1.1.3) 
+</span><span class='line'>Installing coderay (1.0.8) 
+</span><span class='line'>Installing gherkin (2.11.5) with native extensions 
+</span><span class='line'>Installing gist (3.1.1) 
+</span><span class='line'>Installing nokogiri (1.5.6) with native extensions 
+</span><span class='line'>Installing method_source (0.7.1) 
+</span><span class='line'>Installing slop (2.4.4) 
+</span><span class='line'>Installing pry (0.9.8.4) 
+</span><span class='line'>Installing rak (1.4) 
+</span><span class='line'>Installing polyglot (0.3.3) 
+</span><span class='line'>Installing treetop (1.4.12) 
+</span><span class='line'>Installing foodcritic (1.7.0) 
+</span><span class='line'>Installing thor-foodcritic (0.2.0) 
+</span><span class='line'>Using bundler (1.2.0) 
+</span><span class='line'>Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Ahora ya estamos preparados para lanzar el <em>vagrant</em>:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>figarcia@corelia:~/src/chef-server$ vagrant up
+</span><span class='line'>[default] Box opscode-ubuntu-12.04 was not found. Fetching box from specified URL...
+</span><span class='line'>[vagrant] Downloading with Vagrant::Downloaders::HTTP...
+</span><span class='line'>[vagrant] Downloading box: https://opscode-vm.s3.amazonaws.com/vagrant/boxes/opscode-ubuntu-12.04.box
+</span><span class='line'>[vagrant] Extracting box...
+</span><span class='line'>[vagrant] Verifying box...
+</span><span class='line'>[vagrant] Cleaning up downloaded box...
+</span><span class='line'>[default] Importing base box 'opscode-ubuntu-12.04'...
+</span><span class='line'>[default] The guest additions on this VM do not match the install version of
+</span><span class='line'>VirtualBox! This may cause things such as forwarded ports, shared
+</span><span class='line'>folders, and more to not work properly. If any of those things fail on
+</span><span class='line'>this machine, please update the guest additions and repackage the box.
+</span><span class='line'>
+</span><span class='line'>Guest Additions Version: 4.1.22
+</span><span class='line'>VirtualBox Version: 4.2.6
+</span><span class='line'>[default] Matching MAC address for NAT networking...
+</span><span class='line'>[default] Clearing any previously set forwarded ports...
+</span><span class='line'>[default] Forwarding ports...
+</span><span class='line'>[default] -- 22 =&gt; 2222 (adapter 1)
+</span><span class='line'>[Berkshelf] installing cookbooks...
+</span><span class='line'>[Berkshelf] Using chef-server (2.0.0) at path: '/home/figarcia/src/chef-server'
+</span><span class='line'>[Berkshelf] Installing git (2.2.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+</span><span class='line'>[Berkshelf] Installing dmg (1.1.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+</span><span class='line'>[Berkshelf] Installing build-essential (1.3.4) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+</span><span class='line'>[Berkshelf] Installing yum (2.1.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+</span><span class='line'>[Berkshelf] Installing windows (1.8.2) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+</span><span class='line'>[Berkshelf] Installing chef_handler (1.1.4) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+</span><span class='line'>[Berkshelf] Installing runit (0.16.2) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+</span><span class='line'>[default] Creating shared folders metadata...
+</span><span class='line'>[default] Clearing any previously set network interfaces...
+</span><span class='line'>[default] Preparing network interfaces based on configuration...
+</span><span class='line'>[default] Running any VM customizations...
+</span><span class='line'>[default] Booting VM...
+</span><span class='line'>[default] Waiting for VM to boot. This can take a few minutes.
+</span><span class='line'>[default] VM booted and ready for use!
+</span><span class='line'>[default] Configuring and enabling network interfaces...
+</span><span class='line'>[default] Setting host name...
+</span><span class='line'>[default] Mounting shared folders...
+</span><span class='line'>[default] -- v-root: /vagrant
+</span><span class='line'>[default] -- cache: /tmp/vagrant-cache
+</span><span class='line'>[default] -- v-csc-1: /tmp/vagrant-cache/chef-solo-1/cookbooks
+</span><span class='line'>[default] Running provisioner: Vagrant::Provisioners::ChefSolo...
+</span><span class='line'>[default] Generating chef JSON and uploading...
+</span><span class='line'>[default] Running chef-solo...
+</span><span class='line'>stdin: is not a tty
+</span><span class='line'>[2013-02-05T10:43:43+00:00] INFO: *** Chef 10.14.4 ***
+</span><span class='line'>[2013-02-05T10:43:44+00:00] INFO: Setting the run_list to ["recipe[chef-server::default]"] from JSON
+</span><span class='line'>[2013-02-05T10:43:44+00:00] INFO: Run List is [recipe[chef-server::default]]
+</span><span class='line'>[2013-02-05T10:43:44+00:00] INFO: Run List expands to [chef-server::default]
+</span><span class='line'>[2013-02-05T10:43:44+00:00] INFO: Starting Chef Run for chef-server-berkshelf
+</span><span class='line'>[2013-02-05T10:43:44+00:00] INFO: Running start handlers
+</span><span class='line'>[2013-02-05T10:43:44+00:00] INFO: Start handlers complete.
+</span><span class='line'>[2013-02-05T10:43:46+00:00] INFO: Omnitruck download-server request: http://www.opscode.com/chef/download-server?p=ubuntu&pv=12.04&m=x86_64&v=latest&prerelease=false&nightlies=false
+</span><span class='line'>[2013-02-05T10:43:46+00:00] INFO: Downloading chef-server package from: http://opscode-omnitruck-release.s3.amazonaws.com/ubuntu/12.04/x86_64/chef-server_11.0.4-1.ubuntu.12.04_amd64.deb
+</span><span class='line'>[2013-02-05T10:43:46+00:00] INFO: Processing remote_file[/tmp/vagrant-cache/chef-server_11.0.4-1.ubuntu.12.04_amd64.deb] action create (chef-server::default line 40)
+</span><span class='line'>[2013-02-05T10:46:13+00:00] INFO: remote_file[/tmp/vagrant-cache/chef-server_11.0.4-1.ubuntu.12.04_amd64.deb] updated
+</span><span class='line'>[2013-02-05T10:46:13+00:00] INFO: Processing package[chef-server_11.0.4-1.ubuntu.12.04_amd64.deb] action install (chef-server::default line 51)
+</span><span class='line'>[2013-02-05T10:47:20+00:00] INFO: Processing directory[/etc/chef-server] action create (chef-server::default line 63)
+</span><span class='line'>[2013-02-05T10:47:20+00:00] INFO: directory[/etc/chef-server] created directory /etc/chef-server
+</span><span class='line'>[2013-02-05T10:47:20+00:00] INFO: directory[/etc/chef-server] owner changed to 0
+</span><span class='line'>[2013-02-05T10:47:20+00:00] INFO: directory[/etc/chef-server] group changed to 0
+</span><span class='line'>[2013-02-05T10:47:20+00:00] INFO: Processing template[/etc/chef-server/chef-server.rb] action create (chef-server::default line 71)
+</span><span class='line'>[2013-02-05T10:47:23+00:00] INFO: template[/etc/chef-server/chef-server.rb] updated content
+</span><span class='line'>[2013-02-05T10:47:23+00:00] INFO: template[/etc/chef-server/chef-server.rb] owner changed to 0
+</span><span class='line'>[2013-02-05T10:47:23+00:00] INFO: template[/etc/chef-server/chef-server.rb] group changed to 0
+</span><span class='line'>[2013-02-05T10:47:23+00:00] INFO: template[/etc/chef-server/chef-server.rb] sending run action to execute[reconfigure-chef-server] (immediate)
+</span><span class='line'>[2013-02-05T10:47:23+00:00] INFO: Processing execute[reconfigure-chef-server] action run (chef-server::default line 80)
+</span><span class='line'>[2013-02-05T10:48:37+00:00] INFO: execute[reconfigure-chef-server] ran successfully
+</span><span class='line'>[2013-02-05T10:48:37+00:00] INFO: Processing execute[reconfigure-chef-server] action nothing (chef-server::default line 80)
+</span><span class='line'>[2013-02-05T10:48:37+00:00] INFO: Processing ruby_block[ensure node can resolve API FQDN] action create (chef-server::default line 85)
+</span><span class='line'>[2013-02-05T10:48:37+00:00] INFO: Chef Run complete in 292.646946138 seconds
+</span><span class='line'>[2013-02-05T10:48:37+00:00] INFO: Running report handlers
+</span><span class='line'>[2013-02-05T10:48:37+00:00] INFO: Report handlers complete</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Comprobamos que está arriba y funcional:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>figarcia@corelia:~/src/chef-server$ curl -k https://33.33.33.10/version
+</span><span class='line'>chef-server 11.0.4
+</span><span class='line'>
+</span><span class='line'>Component               Installed Version   Version GUID                                   
+</span><span class='line'>-------------------------------------------------------------------------------------------
+</span><span class='line'>bookshelf               0.2.1               git:0a01f74ffd1313c4dc9bf0d236e03a871add4e01   
+</span><span class='line'>chef                    11.0.0              git:f1a0a51ee25bd1e8247880888f3d6af4750bbdb9   
+</span><span class='line'>chef-expander           11.0.0              git:14b11a96da1273b362f39ab11c411470688a8bd6   
+</span><span class='line'>chef-pedant             1.0.2               git:947bcefb4c59e0612286b6bc3ae746e85bd3a056   
+</span><span class='line'>chef-server-cookbooks   11.0.4              
+</span><span class='line'>chef-server-ctl         11.0.4              
+</span><span class='line'>chef-server-scripts     11.0.4              
+</span><span class='line'>chef-server-webui       11.0.1              git:30354f08d5e1f9f344dd9f21e8ac33ce8f1e9e9b   
+</span><span class='line'>chef-solr               11.0.0              git:a594a634acd468d59d3929a5289c18cc7421827e   
+</span><span class='line'>erchef                  1.2.5               git:90a36102a9420a540eae4db72a01aae1bb08e6e1   
+</span><span class='line'>nginx                   1.2.3               md5:0a986e60826d9e3b453dbefc36bf8f6c           
+</span><span class='line'>postgresql              9.2.1               md5:c0b4799ea9850eae3ead14f0a60e9418           
+</span><span class='line'>preparation             11.0.4              
+</span><span class='line'>rabbitmq                2.7.1               md5:34a5f9fb6f22e6681092443fcc80324f           
+</span><span class='line'>runit                   2.1.1               md5:8fa53ea8f71d88da9503f62793336bc3           
+</span><span class='line'>unicorn                 4.2.0               
+</span><span class='line'>version-manifest        11.0.4 </span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hemos levantado un <em>Chef Server 11</em> en un <em>tris</em>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm/">Borrar Máquinas Virtuales Con KVM</a></h1>
     
     
@@ -258,6 +668,10 @@ borrar en <em>tmp/vms.list</em> ejecuto:</p>
     <li class="nav-header">Recent Posts</li>
     
       <li class="post">
+        <a href="/blog/2013/02/05/prueba-de-la-demo-de-chef-sever-11/">Prueba de la Demo de Chef Sever 11</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm/">Borrar Máquinas Virtuales con KVM</a>
       </li>
     
@@ -304,15 +718,6 @@ borrar en <em>tmp/vms.list</em> ejecuto:</p>
 
 
 
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/frekofefe?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
 
 
   
@@ -345,14 +750,6 @@ borrar en <em>tmp/vms.list</em> ejecuto:</p>
 
 
 
-
-  <script type="text/javascript">
-    (function() {
-      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
-      script.src = 'https://apis.google.com/js/plusone.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
-    })();
-  </script>
 
 
 
