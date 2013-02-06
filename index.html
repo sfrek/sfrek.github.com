@@ -97,6 +97,147 @@
       
   <header class="page-header">
     
+      <h1 class="entry-title"><a href="/blog/2013/02/06/entornos-com-rvm/">Distintos Entornos Con Un único RVM</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-06T11:58:00+01:00" pubdate data-updated="true">Feb 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Un post rápido, sobre todo como <em>&#8220;nota y/o apunte mental&#8221;</em> para mí, pero que creo que a todos os vendrá bien.
+En mi trabajo y/o cacharreo diario uso de manera indiscriminada <a href="http://www.ruby-lang.org/es/">ruby</a>, por ejemplo, para postear ( <a href="http://octopress.org/">octopress</a> ), para usar <a href="http://www.opscode.com/chef/">chef</a> a través de <a href="http://wiki.opscode.com/display/chef/Knife">knife</a> ( .. y <a href="https://github.com/applicationsonline/librarian#readme">librarian</a> y <a href="http://wiki.opscode.com/display/chef/Spiceweasel">spiceweasel</a> ), y <a href="http://www.vagrantup.com/">vagrant</a> y <a href="https://github.com/jedi4ever/veewee#readme">veewee</a> y <a href="http://gitlab.org/">gitlab</a> y <a href="http://www.redmine.org/">redmine</a> y &#8230; DIOS <a href="https://twitter.com/achilued">@achilued</a> estoy rodeado. Bueno, para todo esto uso <a href="https://rvm.io/">rvm</a>, que si, que si, que podria usar <a href="https://github.com/sstephenson/rbenv/#readme">rbenv</a>, ok, pero me he acostubrado a usar <a href="https://rvm.io/">rvm</a>, y he descubierto los <a href="https://rvm.io/gemsets/basics/">gemset</a> ( vale, todos aquellos que sois un gurú de <a href="http://www.ruby-lang.org/es/">ruby</a> ya lo concíais, :D ), estos <a href="https://rvm.io/gemsets/basics/">gemset</a> son simplemente contenedores de <a href="http://guides.rubygems.org/what-is-a-gem/">gemas</a>, esto nos permite no sólo tener diferentes versiones de <a href="http://www.ruby-lang.org/es/">ruby</a>, si no, que con la misma version podemos tener diferentes conjuntosde <a href="http://guides.rubygems.org/what-is-a-gem/">gemas</a> para todas nuestras historias.</p>
+
+<p>Al lio.</p>
+
+<h3>Creación del <em>gemset</em></h3>
+
+<ul>
+<li>Antes de crear cualquier <a href="https://rvm.io/gemsets/basics/">gemset</a> hay que tener, obviamente, <a href="https://rvm.io/rvm/install/">instalado rvm</a>, en mi caso:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deployer@debvirt:~$ rvm version
+</span><span class='line'>
+</span><span class='line'>rvm 1.18.5 (stable) by Wayne E. Seguin &lt;wayneeseguin@gmail.com&gt;, Michal Papis &lt;mpapis@gmail.com&gt; [https://rvm.io/]</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Con la version de <a href="http://www.ruby-lang.org/es/">ruby</a></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deployer@debvirt:~$ rvm list
+</span><span class='line'>
+</span><span class='line'>rvm rubies
+</span><span class='line'>
+</span><span class='line'>=* ruby-1.9.3-p374 [ x86_64 ]
+</span><span class='line'>
+</span><span class='line'># =&gt; - current
+</span><span class='line'># =* - current && default
+</span><span class='line'>#  * - default</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><em><a href="https://rvm.io/gemsets/creating/">Creamos el gemset</a></em></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deployer@debvirt:~$ rvm gemset create bosh
+</span><span class='line'>gemset created bosh =&gt; /home/deployer/.rvm/gems/ruby-1.9.3-p374@bosh</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Uso</h3>
+
+<p>Para usar cada uno de los <a href="https://rvm.io/gemsets/basics/">gemset</a>, se puede, o bien especificarlo en un archivo <a href="https://rvm.io/workflow/rvmrc/">rvmrc</a> en cada uno de los directorios de los distintos proyectos o bien invocarlo a través de <code>rvm</code>:</p>
+
+<ul>
+<li>Archivo <a href="https://rvm.io/workflow/rvmrc/">rvmrc</a> ejemplo:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deployer@debvirt:/tmp/ejemplo$ cat .rvmrc 
+</span><span class='line'>rvm use ruby-1.9.3@default</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Comando <code>rvm use gemset &lt;nombre&gt;</code></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deployer@debvirt:~$ rvm gemset use bosh
+</span><span class='line'>Using ruby-1.9.3-p374 with gemset bosh</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Más <em>tips</em></h4>
+
+<ul>
+<li>listado del los <a href="https://rvm.io/gemsets/basics/">gemset</a></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deployer@debvirt:~$ rvm gemset list
+</span><span class='line'>
+</span><span class='line'>gemsets for ruby-1.9.3-p374 (found in /home/deployer/.rvm/gems/ruby-1.9.3-p374)
+</span><span class='line'>   (default)
+</span><span class='line'>   bosh
+</span><span class='line'>=&gt; chef
+</span><span class='line'>   global</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Saludos.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header class="page-header">
+    
       <h1 class="entry-title"><a href="/blog/2013/02/05/prueba-de-la-demo-de-chef-sever-11/">Prueba De La Demo De Chef Sever 11</a></h1>
     
     
@@ -666,6 +807,10 @@ borrar en <em>tmp/vms.list</em> ejecuto:</p>
     <section class="well">
   <ul id="recent_posts" class="nav nav-list">
     <li class="nav-header">Recent Posts</li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/06/entornos-com-rvm/">Distintos entornos con un único RVM</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/02/05/prueba-de-la-demo-de-chef-sever-11/">Prueba de la Demo de Chef Sever 11</a>

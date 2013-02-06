@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rvm | Sfrek's Blog]]></title>
+  <link href="http://sfrek.github.com/blog/categories/rvm/atom.xml" rel="self"/>
+  <link href="http://sfrek.github.com/"/>
+  <updated>2013-02-06T12:55:16+01:00</updated>
+  <id>http://sfrek.github.com/</id>
+  <author>
+    <name><![CDATA[Fernando Israel García Martínez]]></name>
+    <email><![CDATA[frekofefe@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Distintos entornos con un único RVM]]></title>
+    <link href="http://sfrek.github.com/blog/2013/02/06/entornos-com-rvm/"/>
+    <updated>2013-02-06T11:58:00+01:00</updated>
+    <id>http://sfrek.github.com/blog/2013/02/06/entornos-com-rvm</id>
+    <content type="html"><![CDATA[<p>Un post rápido, sobre todo como <em>"nota y/o apunte mental"</em> para mí, pero que creo que a todos os vendrá bien.
+En mi trabajo y/o cacharreo diario uso de manera indiscriminada <a href="http://www.ruby-lang.org/es/">ruby</a>, por ejemplo, para postear ( <a href="http://octopress.org/">octopress</a> ), para usar <a href="http://www.opscode.com/chef/">chef</a> a través de <a href="http://wiki.opscode.com/display/chef/Knife">knife</a> ( .. y <a href="https://github.com/applicationsonline/librarian#readme">librarian</a> y <a href="http://wiki.opscode.com/display/chef/Spiceweasel">spiceweasel</a> ), y <a href="http://www.vagrantup.com/">vagrant</a> y <a href="https://github.com/jedi4ever/veewee#readme">veewee</a> y <a href="http://gitlab.org/">gitlab</a> y <a href="http://www.redmine.org/">redmine</a> y ... DIOS <a href="https://twitter.com/achilued">@achilued</a> estoy rodeado. Bueno, para todo esto uso <a href="https://rvm.io/">rvm</a>, que si, que si, que podria usar <a href="https://github.com/sstephenson/rbenv/#readme">rbenv</a>, ok, pero me he acostubrado a usar <a href="https://rvm.io/">rvm</a>, y he descubierto los <a href="https://rvm.io/gemsets/basics/">gemset</a> ( vale, todos aquellos que sois un gurú de <a href="http://www.ruby-lang.org/es/">ruby</a> ya lo concíais, :D ), estos <a href="https://rvm.io/gemsets/basics/">gemset</a> son simplemente contenedores de <a href="http://guides.rubygems.org/what-is-a-gem/">gemas</a>, esto nos permite no sólo tener diferentes versiones de <a href="http://www.ruby-lang.org/es/">ruby</a>, si no, que con la misma version podemos tener diferentes conjuntosde <a href="http://guides.rubygems.org/what-is-a-gem/">gemas</a> para todas nuestras historias.</p>
+
+<p>Al lio.</p>
+
+<h3>Creación del <em>gemset</em></h3>
+
+<ul>
+<li>Antes de crear cualquier <a href="https://rvm.io/gemsets/basics/">gemset</a> hay que tener, obviamente, <a href="https://rvm.io/rvm/install/">instalado rvm</a>, en mi caso:</li>
+</ul>
+
+
+<p>```
+deployer@debvirt:~$ rvm version</p>
+
+<p>rvm 1.18.5 (stable) by Wayne E. Seguin <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x77;&#97;&#121;&#110;&#x65;&#x65;&#x73;&#101;&#103;&#117;&#105;&#x6e;&#64;&#103;&#109;&#97;&#105;&#x6c;&#x2e;&#x63;&#111;&#109;">&#119;&#97;&#121;&#110;&#x65;&#x65;&#115;&#101;&#103;&#117;&#105;&#110;&#64;&#x67;&#x6d;&#x61;&#x69;&#108;&#x2e;&#x63;&#x6f;&#x6d;</a>, Michal Papis <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#x6f;&#x3a;&#x6d;&#x70;&#97;&#112;&#x69;&#115;&#x40;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#111;&#109;">&#x6d;&#x70;&#97;&#x70;&#105;&#x73;&#x40;&#x67;&#x6d;&#x61;&#x69;&#x6c;&#46;&#99;&#111;&#x6d;</a> [https://rvm.io/]
+```</p>
+
+<ul>
+<li>Con la version de <a href="http://www.ruby-lang.org/es/">ruby</a></li>
+</ul>
+
+
+<p>```
+deployer@debvirt:~$ rvm list</p>
+
+<p>rvm rubies</p>
+
+<p>=* ruby-1.9.3-p374 [ x86_64 ]</p>
+
+<h1>=> - current</h1>
+
+<h1>=* - current &amp;&amp; default</h1>
+
+<h1>* - default</h1>
+
+<p>```</p>
+
+<ul>
+<li><em><a href="https://rvm.io/gemsets/creating/">Creamos el gemset</a></em></li>
+</ul>
+
+
+<p><code>
+deployer@debvirt:~$ rvm gemset create bosh
+gemset created bosh =&gt; /home/deployer/.rvm/gems/ruby-1.9.3-p374@bosh
+</code></p>
+
+<h3>Uso</h3>
+
+<p>Para usar cada uno de los <a href="https://rvm.io/gemsets/basics/">gemset</a>, se puede, o bien especificarlo en un archivo <a href="https://rvm.io/workflow/rvmrc/">rvmrc</a> en cada uno de los directorios de los distintos proyectos o bien invocarlo a través de <code>rvm</code>:</p>
+
+<ul>
+<li><p>Archivo <a href="https://rvm.io/workflow/rvmrc/">rvmrc</a> ejemplo:
+<code>
+deployer@debvirt:/tmp/ejemplo$ cat .rvmrc
+rvm use ruby-1.9.3@default
+</code></p></li>
+<li><p>Comando <code>rvm use gemset &lt;nombre&gt;</code>
+<code>
+deployer@debvirt:~$ rvm gemset use bosh
+Using ruby-1.9.3-p374 with gemset bosh
+</code></p></li>
+</ul>
+
+
+<h4>Más <em>tips</em></h4>
+
+<ul>
+<li>listado del los <a href="https://rvm.io/gemsets/basics/">gemset</a>
+```
+deployer@debvirt:~$ rvm gemset list</li>
+</ul>
+
+
+<p>gemsets for ruby-1.9.3-p374 (found in /home/deployer/.rvm/gems/ruby-1.9.3-p374)
+   (default)
+   bosh
+=> chef
+   global
+```</p>
+
+<p>Saludos.</p>
+]]></content>
+  </entry>
+  
+</feed>
