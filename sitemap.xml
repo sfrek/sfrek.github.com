@@ -2,15 +2,19 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://sfrek.github.com/blog/2013/02/04/borrar-maquinas-virtuales-con-kvm/</loc>
-        <lastmod>2013-02-05T09:10:08+01:00</lastmod>
+        <lastmod>2013-04-19T11:56:23+02:00</lastmod>
     </url>
     <url>
         <loc>http://sfrek.github.com/blog/2013/02/05/prueba-de-la-demo-de-chef-sever-11/</loc>
-        <lastmod>2013-02-05T13:41:39+01:00</lastmod>
+        <lastmod>2013-04-19T11:55:29+02:00</lastmod>
     </url>
     <url>
         <loc>http://sfrek.github.com/blog/2013/02/06/entornos-com-rvm/</loc>
-        <lastmod>2013-02-06T12:54:40+01:00</lastmod>
+        <lastmod>2013-04-19T11:55:51+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://sfrek.github.com/blog/2013/04/19/quick-access-to-cloudfoundry/</loc>
+        <lastmod>2013-04-19T11:54:57+02:00</lastmod>
     </url>
     <url>
         <loc>http://sfrek.github.com/404.html</loc>
@@ -22,10 +26,10 @@
     </url>
     <url>
         <loc>http://sfrek.github.com/blog/archives/</loc>
-        <lastmod>2013-02-06T12:54:40+01:00</lastmod>
+        <lastmod>2013-04-19T11:56:23+02:00</lastmod>
     </url>
     <url>
         <loc>http://sfrek.github.com/</loc>
-        <lastmod>2013-02-06T12:54:40+01:00</lastmod>
+        <lastmod>2013-04-19T11:56:23+02:00</lastmod>
     </url>
 </urlset>

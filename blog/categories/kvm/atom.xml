@@ -4,7 +4,7 @@
   <title><![CDATA[Category: kvm | Sfrek's Blog]]></title>
   <link href="http://sfrek.github.com/blog/categories/kvm/atom.xml" rel="self"/>
   <link href="http://sfrek.github.com/"/>
-  <updated>2013-02-06T12:55:16+01:00</updated>
+  <updated>2013-04-19T11:57:18+02:00</updated>
   <id>http://sfrek.github.com/</id>
   <author>
     <name><![CDATA[Fernando Israel García Martínez]]></name>
@@ -24,6 +24,9 @@ general y/o el <em>"cloud"</em> en particular, cuando hay que hacer alguna tarea
 minería no me importa gastar algo de tiempo en <em>"automatizar"</em> dicha tarea,
 aunque, luego no lo vuelva a necesitar, ejejeje. Como dijo un coleguita, <em>"El
 script, que crea el script, que realiza la acción"</em>.</p>
+
+<!-- more -->
+
 
 <p>Bueno al grano, tenemos un servidor dedicado a la <em>virtualización</em> con <a href="http://www.linux-kvm.org/">kvm</a>,
 y lo teníamos hasta arriva de máquínas que ya no usamos para nada, así que

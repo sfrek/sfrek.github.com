@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Cloud | Sfrek's Blog]]></title>
+  <link href="http://sfrek.github.com/blog/categories/cloud/atom.xml" rel="self"/>
+  <link href="http://sfrek.github.com/"/>
+  <updated>2013-04-19T11:57:18+02:00</updated>
+  <id>http://sfrek.github.com/</id>
+  <author>
+    <name><![CDATA[Fernando Israel García Martínez]]></name>
+    <email><![CDATA[frekofefe@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Quick Access to CloudFoundry]]></title>
+    <link href="http://sfrek.github.com/blog/2013/04/19/quick-access-to-cloudfoundry/"/>
+    <updated>2013-04-19T09:42:00+02:00</updated>
+    <id>http://sfrek.github.com/blog/2013/04/19/quick-access-to-cloudfoundry</id>
+    <content type="html"><![CDATA[<h2>Mini "tuto" de acceso a Cloud Foundry a través de "vmc"</h2>
+
+<p>Voy a contar de manera muy escueta como accedo a un <em>PaaS Cloud Foundry</em>.</p>
+
+<h3>Instalaciones</h3>
+
+<p>He usado <a href="https://rvm.io/">rvm</a> para instalar <a href="http://docs.cloudfoundry.com/tools/vmc/vmc.html">vmc</a></p>
+
+<h4>Instalación <a href="https://rvm.io/">rvm</a> y <a href="http://docs.cloudfoundry.com/tools/vmc/vmc.html">vmc</a></h4>
+
+<p>Es necesario que el usuario haga uso de <a href="http://www.sudo.ws/">sudo</a>. Para instalar:</p>
+
+<!-- more -->
+
+
+<p>```
+imasd@corelia:~$ curl -#L https://get.rvm.io | bash -s stable --autolibs=3 --ruby
+imasd@corelia:~$ source .bash_profile
+imasd@corelia:~$ rvm list</p>
+
+<p>rvm rubies</p>
+
+<p>=* ruby-2.0.0-p0 [ x86_64 ]</p>
+
+<h1>=> - current</h1>
+
+<h1>=* - current &amp;&amp; default</h1>
+
+<h1>* - default</h1>
+
+<p>```</p>
+
+<p>Una vez instalado <a href="https://rvm.io/">rvm</a> me creo un <a href="https://rvm.io/gemsets/basics">gemset</a> especifico para albergar las utilidades.</p>
+
+<p><code>
+imasd@corelia:~$ rvm gemset create cf-imasd
+imasd@corelia:~$ rvm gemset use cf-imasd
+</code></p>
+
+<p>Y ahora que ya estamos en el <a href="https://rvm.io/gemsets/basics">gemset</a> especifico, instalamos <a href="http://docs.cloudfoundry.com/tools/vmc/vmc.html">vmc</a>.</p>
+
+<p><code>
+imasd@corelia:~$ gem install vmc --no-rdoc --no-ri
+</code></p>
+
+<h3>Uso de <a href="http://docs.cloudfoundry.com/tools/vmc/vmc.html">vmc</a></h3>
+
+<p>Lo primero es conectarse a la infraestructura.</p>
+
+<p><code>
+imasd@corelia:~$ vmc target api.cfimasd.abadasoft.com
+Setting target to http://api.cfimasd.abadasoft.com... OK
+</code></p>
+
+<p>Si no tenemos usuario registrado, debemos crear uno, esto sólo es posible si el entorno lo permite.</p>
+
+<p>```
+imasd@corelia:~$ vmc register imasd@abadasoft.com
+Password> *********</p>
+
+<p>Confirm Password> *********</p>
+
+<p>Your password strength is: good
+Creating user... OK
+target: http://api.cfimasd.abadasoft.com</p>
+
+<p>Authenticating... OK
+```</p>
+
+<p>Una vez registrado, podemos logarnos.</p>
+
+<p>```
+imasd@corelia:~$ vmc login imasd@abadasoft.com
+target: http://api.cfimasd.abadasoft.com</p>
+
+<p>Password> *********</p>
+
+<p>Authenticating... OK
+```</p>
+
+<p>Ya podríamos desplegar aplicaciones.</p>
+
+<h4>Ejemplo de despliegue</h4>
+
+<p>Para relizar el despliegue de una aplicación únicamente debemos ir al directorio de dicha aplicación, y ejecutar <code>vmc push</code>.</p>
+
+<h5>Aplicacion ruby</h5>
+
+<h6>Despliegue</h6>
+
+<p>```
+imasd@corelia:~/apps/env$ vmc push
+Using manifest file manifest.yml</p>
+
+<p>Creating env... OK</p>
+
+<p>1: env.cfimasd.abadasoft.com
+2: none
+Domain> env.cfimasd.abadasoft.com</p>
+
+<p>Updating env... OK
+Uploading env... OK
+Starting env... OK
+Checking env...
+  0/1 instances: 1 starting</p>
+
+<pre><code>1/1 instances: 1 running
+</code></pre>
+
+<p>OK
+```</p>
+
+<p>El fichero <em>manifest.yml</em> tiene:</p>
+
+<h2>```ruby</h2>
+
+<p>applications:
+- name: env
+  framework: sinatra
+  runtime: ruby19
+  memory: 128M
+  instances: 1
+  url: env.${target-base}
+  path: .
+```</p>
+
+<h6>Prueba</h6>
+
+<p>```
+imasd@corelia:~/apps/env$ lynx --dump env.cfimasd.abadasoft.com</p>
+
+<pre><code>         XXXXX Hello from the Cloud! via: 192.168.242.137:54765
+</code></pre>
+
+<p>```</p>
+
+<p>Si se hace un cambio en el codigo:</p>
+
+<p>```
+imasd@corelia:~/apps/env$ vim env.rb</p>
+
+<p>imasd@corelia:~/apps/env$ vmc push
+Using manifest file manifest.yml</p>
+
+<p>Uploading env... OK
+Stopping env... OK</p>
+
+<p>Starting env... OK
+Checking env...
+  0/1 instances: 1 starting</p>
+
+<pre><code>1/1 instances: 1 running
+</code></pre>
+
+<p>OK</p>
+
+<p>imasd@corelia:~/apps/env$ lynx --dump env.cfimasd.abadasoft.com</p>
+
+<pre><code>         XXXXX Hello from the Cloud! via: 192.168.242.137:46386
+
+         Your IP address is 213.37.69.91
+</code></pre>
+
+<p>```</p>
+
+<h5>Aplicacion Java</h5>
+
+<h6>Despliegue</h6>
+
+<p>Enpaquetamos:</p>
+
+<p><code>
+imasd@corelia:~/apps/hello-java$ mvn clean package
+[ ............................................................................ ]
+[INFO] Packaging webapp
+[INFO] Assembling webapp [hello-java] in [/home/imasd/apps/hello-java/target/hello-java-1.0]
+[INFO] Processing war project
+[INFO] Copying webapp resources [/home/imasd/apps/hello-java/src/main/webapp]
+[INFO] Webapp assembled in [68 msecs]
+[INFO] Building war: /home/imasd/apps/hello-java/target/hello-java-1.0.war
+[INFO] WEB-INF/web.xml already added, skipping
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14.598s
+[INFO] Finished at: Fri Apr 19 11:32:40 CEST 2013
+[INFO] Final Memory: 16M/148M
+[INFO] ------------------------------------------------------------------------
+</code></p>
+
+<p>Desplegamos:</p>
+
+<p>```
+imasd@corelia:~/apps/hello-java$ cd target/
+imasd@corelia:~/apps/hello-java/target$ vmc push
+Name> hello-java</p>
+
+<p>Instances> 1</p>
+
+<p>1: java_web
+2: other
+Framework> 1</p>
+
+<p>1: java
+2: java7
+3: other
+Runtime> 1</p>
+
+<p>1: 64M
+2: 128M
+3: 256M
+4: 512M
+5: 1G
+Memory Limit> 512M</p>
+
+<p>Creating hello-java... OK</p>
+
+<p>1: hello-java.cfimasd.abadasoft.com
+2: none
+Domain> hello-java.cfimasd.abadasoft.com</p>
+
+<p>Updating hello-java... OK</p>
+
+<p>Create services for application?> n</p>
+
+<p>Save configuration?> n</p>
+
+<p>Uploading hello-java... OK
+Starting hello-java... OK
+Checking hello-java...
+  0/1 instances: 1 starting</p>
+
+<pre><code>1/1 instances: 1 running
+</code></pre>
+
+<p>OK
+```</p>
+
+<h6>Prueba</h6>
+
+<p><code>
+imasd@corelia:~/apps/hello-java/target$ lynx --dump hello-java.cfimasd.abadasoft.com
+Hello from 192.168.242.137:50389
+</code></p>
+
+<p>Si se hace un cambio en el codigo:</p>
+
+<p>```
+imasd@corelia:~/apps/hello-java$ vim src/main/java/org/cloudfoundry/samples/HelloServlet.java</p>
+
+<p>imasd@corelia:~/apps/hello-java$ mvn clean package</p>
+
+<p>imasd@corelia:~/apps/hello-java$ vmc push --path target/
+Name> hello-java</p>
+
+<p>Save configuration?> y</p>
+
+<p>Saving to manifest.yml... OK
+Uploading hello-java... OK
+Stopping hello-java... OK</p>
+
+<p>Starting hello-java... OK
+Checking hello-java...
+  0/1 instances: 1 starting
+  1/1 instances: 1 running
+OK
+<code>``
+Al pulsar</code>y` en <em>Save configuration?</em> se crea el fichero <em>manifest.yml</em>:</p>
+
+<p>```</p>
+
+<h2>imasd@corelia:~/apps/hello-java$ cat manifest.yml </h2>
+
+<p>applications:
+- name: hello-java
+  framework: java_web
+  runtime: java
+  memory: 512M
+  instances: 1
+  url: hello-java.${target-base}
+  path: target/</p>
+
+<p>```</p>
+
+<p>El <em>dump</em> para comprobar si la aplicación ha cambiado:</p>
+
+<p>```
+imasd@corelia:~/apps/hello-java$ lynx --dump hello-java.cfimasd.abadasoft.com
+Hello from 192.168.242.137:47951
+I am: hello-java</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>
